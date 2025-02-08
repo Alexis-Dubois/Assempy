@@ -5,13 +5,30 @@ from time import perf_counter
 from Environment import Environment
 from CustomException import CustomException
 
+from operations.Cmp import Cmp
+from operations.Mov import Mov
+from operations.Add import Add
+from operations.Sub import Sub
+from operations.Mul import Mul
+from operations.Mod import Mod
+from operations.Printf import Printf
+
+from operations.Exit import Exit
+from operations.B import B
+from operations.Bgt import Bgt
+from operations.Bge import Bge
+from operations.Ble import Ble
+from operations.Blt import Blt
+from operations.Beq import Beq
+from operations.Bne import Bne
+
+
 class Interpreter:
 
     def __init__(self, file_name):
         self.DEBUG = False # if we want to debug Interpreter.run()
         self.environment = Environment()
         self.commands = []
-        self.counter = 1
 
         try:
             with open(file_name) as code:
@@ -43,21 +60,21 @@ class Interpreter:
 
     def run(self):
         t1 = perf_counter()
-        while self.counter <= len(self.commands) and self.counter >= 0:
-            command = self.commands[self.counter-1]
-            self.counter += 1
+        while self.environment.counter <= len(self.commands) and self.environment.counter >= 0:
+            command = self.commands[self.environment.counter-1]
+            self.environment.counter += 1
             if command == None:
                 continue
             if not self.DEBUG:
                 try:
                     self.execute(command)
                 except:
-                    print(f"Error at line {self.counter}")
+                    print(f"Error at line {self.environment.counter}")
                     sys.exit()
             else:
                 self.execute(command)
         
-        if self.counter == -1:
+        if self.environment.counter == -1:
             print(f"program ended succesfully in {perf_counter() - t1} seconds")
         else:
             print("Program did not exit correctly")
@@ -67,124 +84,50 @@ class Interpreter:
         operation = command[0]
 
         if operation == "exit":
-            self.counter = -1
-
-        elif operation == "cmp":
-            if len(command) != 3:
-                print(f"Operation cmp take 2 arguments, received {len(command)-1}")
-                raise CustomException
-            
-            self.environment.update_flag(command[1], command[2])
+            Exit.execute(self.environment, command)
 
         elif operation == "b":
-            if len(command) != 2:
-                print(f"Operation branch take 1 arguments, received {len(command)-1}")
-                raise CustomException
-            self.branch_to(command[1])
+            B.execute(self.environment, command)
 
         elif operation == "b.eq":
-            if len(command) != 2:
-                print(f"Operation branch take 1 arguments, received {len(command)-1}")
-                raise CustomException
-            if self.environment.flags["Z"] == 1:
-                self.branch_to(command[1])
+            Beq.execute(self.environment, command)
         
         elif operation == "b.ne":
-            if len(command) != 2:
-                print(f"Operation branch take 1 arguments, received {len(command)-1}")
-                raise CustomException
-            if self.environment.flags["Z"] == 0:
-                self.branch_to(command[1])
+            Bne.execute(self.environment, command)
 
         elif operation == "b.gt":
-            if len(command) != 2:
-                print(f"Operation branch take 1 arguments, received {len(command)-1}")
-                raise CustomException
-            if self.environment.flags["Z"] == 0 and self.environment.flags["C"] == 1:
-                self.branch_to(command[1])
+            Bgt.execute(self.environment, command)
         
         elif operation == "b.ge":
-            if len(command) != 2:
-                print(f"Operation branch take 1 arguments, received {len(command)-1}")
-                raise CustomException
-            if self.environment.flags["C"] == 1:
-                self.branch_to(command[1])
+            Bge.execute(self.environment, command)
 
         elif operation == "b.le":
-            if len(command) != 2:
-                print(f"Operation branch take 1 arguments, received {len(command)-1}")
-                raise CustomException
-            if self.environment.flags["C"] == 0:
-                self.branch_to(command[1])
+            Ble.execute(self.environment, command)
 
         elif operation == "b.lt":
-            if len(command) != 2:
-                print(f"Operation branch take 1 arguments, received {len(command)-1}")
-                raise CustomException
-            if self.environment.flags["C"] == 0 and self.environment.flags["Z"] == 0:
-                self.branch_to(command[1])
+            Blt.execute(self.environment, command)
+
+        elif operation == "cmp":
+            Cmp.execute(self.environment, command)
 
         elif operation == "mov":
-            if len(command) != 3:
-                print(f"Operation mov take 2 arguments, received {len(command)-1}")
-                raise CustomException
-            
-            destination = command[1]
-            value = self.environment.decode_argument(command[2])
-
-            self.environment.set_registre_value(destination, value)
+            Mov.execute(self.environment, command)
 
         elif operation == "add":
-            if len(command) != 4:
-                print(f"Operation add take 3 arguments, received {len(command)-1}")
-                raise CustomException
-            
-            destination = command[1]
+            Add.execute(self.environment, command)
 
-            value1 = self.environment.decode_argument(command[2])
-            value2 = self.environment.decode_argument(command[3])
-            
-            self.environment.set_registre_value(destination, value1+value2)
+        elif operation == "sub":
+            Sub.execute(self.environment, command)
 
         elif operation == "mul":
-            if len(command) != 4:
-                print(f"Operation add take 3 arguments, received {len(command)-1}")
-                raise CustomException
-            
-            destination = command[1]
-
-            value1 = self.environment.decode_argument(command[2])
-            value2 = self.environment.decode_argument(command[3])
-            
-            self.environment.set_registre_value(destination, value1*value2)
+            Mul.execute(self.environment, command)
 
         elif operation == "mod":
-            if len(command) != 4:
-                print(f"Operation add take 3 arguments, received {len(command)-1}")
-                raise CustomException
-            
-            destination = command[1]
-
-            value1 = self.environment.decode_argument(command[2])
-            value2 = self.environment.decode_argument(command[3])
-            
-            self.environment.set_registre_value(destination, value1%value2)
+            Mod.execute(self.environment, command)
 
         elif operation == "printf":
-            print(self.environment.get_registre_value("x0"))
+            Printf.execute(self.environment, command)
 
         else:
             print(f"Unknown operation \"{operation}\"")
             raise CustomException
-        
-
-    def branch_to(self, destination):
-        value = self.environment.decode_label(destination)
-
-        if value == -1: # it was not a label
-            value = self.environment.decode_argument(destination)
-
-        self.counter = value
-
-
-

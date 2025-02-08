@@ -7,6 +7,7 @@ class Environment:
     def __init__(self):
         MEMORY_SIZE = 2**16
         self.registres = dict()
+        self.counter = 1
 
         for i in range(31):
             self.registres["x"+str(i)] = 0
