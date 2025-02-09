@@ -1,12 +1,12 @@
 from .Operation import Operation
 
-class madd(Operation):
+class Madd(Operation):
     args_needed = 4
     operation_code = "madd"
 
     @staticmethod
     def execute(environment, args):
-        madd.count_args(madd, len(args)-1)
+        madd.count_args(Madd, len(args)-1)
 
         destination = args[1]
         value1 = environment.decode_argument(args[2])

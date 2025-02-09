@@ -1,12 +1,12 @@
 from .Operation import Operation
 
-class udiv(Operation):
+class Udiv(Operation):
     args_needed = 3
     operation_code = "udiv"
 
     @staticmethod
     def execute(environment, args):
-        udiv.count_args(udiv, len(args)-1)
+        udiv.count_args(Udiv, len(args)-1)
 
         destination = args[1]
         value1 = environment.decode_argument(args[2])

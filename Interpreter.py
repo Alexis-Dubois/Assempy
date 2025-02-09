@@ -6,11 +6,14 @@ from Environment import Environment
 from CustomException import CustomException
 
 from operations.Cmp import Cmp
-from operations.Mov import Mov
-from operations.Add import Add
+from operations.mov import Mov
+from operations.add import Add
 from operations.Sub import Sub
-from operations.Mul import Mul
-from operations.Mod import Mod
+from operations.mul import Mul
+from operations.mod import Mod
+from operations.madd import Madd
+from operations.msub import Msub
+
 from operations.Printf import Printf
 
 from operations.Exit import Exit
@@ -22,7 +25,8 @@ from operations.Blt import Blt
 from operations.Beq import Beq
 from operations.Bne import Bne
 
-
+from operations.And import And
+from operations.orr import Or
 class Interpreter:
 
     def __init__(self, file_name):
@@ -125,9 +129,23 @@ class Interpreter:
         elif operation == "mod":
             Mod.execute(self.environment, command)
 
+        elif operation == "madd":
+            Printf.execute(self.environment, command)
+
+        elif operation == "msub":
+            Printf.execute(self.environment, command)
+
+        elif operation == "udiv":
+            Printf.execute(self.environment, command)
+
         elif operation == "printf":
             Printf.execute(self.environment, command)
 
+        elif operation == "and":
+            Printf.execute(self.environment, command)
+
+        elif operation == "orr":
+            Printf.execute(self.environment, command)
         else:
             print(f"Unknown operation \"{operation}\"")
             raise CustomException

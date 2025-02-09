@@ -13,4 +13,4 @@ class Or(Operation):
         value2 = environment.decode_argument(args[3])
         binary_value1 = bin(args[2])
         binary_value2 = bin(args[3])
-        environment.set_registre_value(destination, binary_value1 or binary_value2)
+        environment.set_registre_value(destination, binary_value1 | binary_value2)
