@@ -6,7 +6,7 @@ class Madd(Operation):
 
     @staticmethod
     def execute(environment, args):
-        madd.count_args(Madd, len(args)-1)
+        Madd.count_args(Madd, len(args)-1)
 
         destination = args[1]
         value1 = environment.decode_argument(args[2])
